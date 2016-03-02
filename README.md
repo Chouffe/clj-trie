@@ -8,24 +8,24 @@ A trie is an ordered tree data structure that is used to store a dynamic set or 
 Tries are interesting datastructures. Here is a list of potential applications:
 
 1. As a replacement of other Data Structures - Hash Table / Binary Search Tree
-    - Lookups in a trie is faster in the worst case, O(m) time, compared to an imperfect hash table
-    - No collisions of different keys
-    - No hash function needed
-    - Can provide alphabetical ordering of the entries by key
+    * Lookups in a trie is faster in the worst case, O(m) time, compared to an imperfect hash table
+    * No collisions of different keys
+    * No hash function needed
+    * Can provide alphabetical ordering of the entries by key
 2. Dictionary representation
 
 A common application is storing a set of words in the trie. A trie is then able to quickly search for, insert and delete entries. Tries are often use in spell checking or autocompletion systems.
 
 ## Get Started
 
-Inserts
+### Inserts
 ```
 (trie ["doo" "foo" "doa" "foot"])
 (into (trie) ["doo" "foo" "doa" "foot"])
 (conj (trie) "doo")
 ```
 
-Lookups
+### Lookups
 ```
 (let [t (trie ["doo" "foo" "doa" "foot"])]
   (get t "doo") ; => "doo"
@@ -33,7 +33,7 @@ Lookups
 )
 ```
 
-Autocompletes
+### Autocompletion
 ```
 (let [t (trie ["doo" "foo" "doa" "foot"])]
   (t "do")     ; => ["doa", "doo"]
@@ -47,14 +47,15 @@ Autocompletes
 Property testing is used for testing the trie implementation.
 To run the tests:
 
-> lein repl
-> (in-ns 'trie.core)
-> (use 'clojure.test)
-> (run-tests)
+```
+lein repl
+(in-ns 'trie.core)
+(use 'clojure.test)
+(run-tests)
+```
 
 ## License
 
-Copyright © 2016 FIXME
+Copyright © 2016 Arthur Caillau
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under The MIT License (MIT)
