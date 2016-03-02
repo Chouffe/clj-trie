@@ -1,23 +1,6 @@
 (ns trie.core
   (:require [clojure.string :as s]))
 
-; Trie representation as a tree with an empty root
-; (def ^:private trie
-;   {:value ""
-;    :children {"t" {:value "t"
-;                    :children {"o" {:value "to"
-;                                    :key 7}
-;                               "e" {:value "te"
-;                                    :children {"a" {:value "tea" :key 3}
-;                                               "d" {:value "ted" :key 4}
-;                                               "n" {:value "ten" :key  12}}}}}
-;               "A" {:value "A" :key 15}
-;               "i" {:value "i"
-;                    :key 11
-;                    :children {"n" {:value "in"
-;                                    :key 5
-;                                    :children {"n" {:value "inn" :key 9}}}}}}})
-
 (defn- make-empty-trie
   "Creates an empty trie with empty lexicon."
   []
@@ -26,10 +9,10 @@
 (defn- trie->seq
   "Returns all the elements inserted in trie as a sequence."
   [{:keys [value children key] :as trie}]
-  ; DFS and get all the
   (loop [stack [trie]
          words []]
-    (if (not (seq stack)) (seq words)
+    (if (not (seq stack))
+      (seq words)
       (let [{:keys [value children key]} (peek stack)]
         (recur (into (pop stack) (vals children))
                (if key (conj words value) words))))))
@@ -68,25 +51,50 @@
   [trie coll]
   (reduce conj-trie trie coll))
 
-(deftype Trie [trie lexicon-set]
+#?(:clj
+    (deftype Trie [trie lexicon-set]
 
-  clojure.lang.ILookup
-  (valAt [self prefix-string] (get lexicon-set prefix-string))
-  (valAt [self prefix-string default] (get lexicon-set prefix-string default))
+      clojure.lang.ILookup
+      (valAt [self prefix-string] (get lexicon-set prefix-string))
+      (valAt [self prefix-string default] (get lexicon-set prefix-string default))
 
-  clojure.lang.IPersistentCollection
-  (seq [self]     (seq lexicon-set))
-  (cons [self o]  (Trie. (conj-trie trie o) (conj lexicon-set o)))
-  (empty [self]   (Trie. (make-empty-trie) #{}))
-  (equiv [self o] (and (instance? Trie o) (= trie (.trie o))))
+      clojure.lang.IPersistentCollection
+      (seq [self]     (seq lexicon-set))
+      (cons [self o]  (Trie. (conj-trie trie o) (conj lexicon-set o)))
+      (empty [self]   (Trie. (make-empty-trie) #{}))
+      (equiv [self o] (and (instance? Trie o) (= trie (.trie o))))
 
-  clojure.lang.IFn
-  (invoke [self prefix-string]
-    (let [completions (apply-trie trie prefix-string)]
-      (if (seq completions) completions nil)))
+      clojure.lang.IFn
+      (invoke [self prefix-string]
+        (let [completions (apply-trie trie prefix-string)]
+          (if (seq completions) completions nil)))
 
-  Object
-  (toString [self] (str (trie->seq trie))))
+      Object
+      (toString [self] (str (trie->seq trie)))))
+
+#?(:cljs
+    (deftype Trie [trie lexicon-set]
+
+      cljs.core/ILookup
+      (-lookup [self prefix-string] (get lexicon-set prefix-string))
+      (-lookup [self prefix-string default] (get lexicon-set prefix-string default))
+
+      cljs.core/ICollection
+      (-conj [self o] (Trie. (conj-trie trie o) (conj lexicon-set o)))
+
+      cljs.core/ICounted
+      (-count [self] (count lexicon-set))
+
+      cljs.core/IEmptyableCollection
+      (-empty [self] (Trie. (make-empty-trie) #{}))
+
+      cljs.core/IFn
+      (-invoke [self prefix-string]
+        (let [completions (apply-trie trie prefix-string)]
+          (if (seq completions) completions nil)))
+
+      Object
+      (toString [self] (str (trie->seq trie)))))
 
 (defn trie
   ([]     (Trie. (make-empty-trie) #{}))
