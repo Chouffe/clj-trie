@@ -70,7 +70,7 @@
           (if (seq completions) completions nil)))
 
       Object
-      (toString [self] (str (trie->seq trie)))))
+      (toString [self] (str trie))))
 
 #?(:cljs
     (deftype Trie [trie lexicon-set]
@@ -94,7 +94,7 @@
           (if (seq completions) completions nil)))
 
       Object
-      (toString [self] (str (trie->seq trie)))))
+      (toString [self] (str trie))))
 
 (defn trie
   ([]     (Trie. (make-empty-trie) #{}))
