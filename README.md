@@ -1,4 +1,4 @@
-# trie
+# clj-trie
 
 A Clojure library designed to implement [tries](https://en.wikipedia.org/wiki/Trie).
 A trie is an ordered tree data structure that is used to store a dynamic set or associative array where the keys are usually strings.
